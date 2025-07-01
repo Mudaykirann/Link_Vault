@@ -1,0 +1,24 @@
+{
+  "links": [
+    {
+      "id": 1,
+      "title": "GitHub",
+      "url": "https://github.com",
+      "category": "Development",
+      "description": "Platform for version control and collaboration"
+    },
+    {
+      "id": 2,
+      "title": "MDN Web Docs",
+      "url": "https://developer.mozilla.org",
+      "category": "Documentation",
+      "description": "Resources for developers, by developers"
+    }
+  ],
+  "categories": [
+    "Development",
+    "Documentation",
+    "Design",
+    "Tools"
+  ]
+} 
