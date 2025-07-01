@@ -24,9 +24,8 @@
 
 ## 📸 Demo
 
-| Desktop | Mobile |
-| ------- | ------ |
-| ![linkdesktop](https://github.com/user-attachments/assets/e5836b5a-87c0-40bf-8cb9-dcaa8771379d) | ![linkmobile](https://github.com/user-attachments/assets/a4e2e59f-fe71-4675-a378-8769c0831a2e) |
+| Desktop |
+| ![linkdesktop](https://github.com/user-attachments/assets/e5836b5a-87c0-40bf-8cb9-dcaa8771379d)
 
 
 
