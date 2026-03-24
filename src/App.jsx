@@ -12,18 +12,28 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Links from './pages/Links'
 import Profile from './pages/Profile'
 import Categories from './pages/Categories'
+import NotFound from './pages/NotFound'
 import LoadingScreen from './components/LoadingScreen'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Navbar from './components/Navbar'
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true)
+  const hasShownLoader = useRef(false)
+
+  useEffect(() => {
+    // Show the loading screen only on the first app load
+    if (!hasShownLoader.current) {
+      hasShownLoader.current = true
+      // LoadingScreen will automatically hide itself after completion
+    }
+  }, [])
 
   return (
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+          {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
 
           {!isLoading && (
             <div className="min-h-screen">
@@ -73,8 +83,8 @@ const App = () => {
                   />
                 </Route>
 
-                {/* Catch all route */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                {/* Catch all route - 404 Not Found */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           )}

@@ -56,7 +56,7 @@ const Register = () => {
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true)
             try {
-                const response = await fetch(`${config.apiUrl}/auth/register`, {
+                const response = await fetch(`${config.apiUrl}/auth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
