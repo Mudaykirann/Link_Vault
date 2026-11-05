@@ -1,0 +1,773 @@
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import {
+    BarChart3, TrendingUp, Calendar, CheckCircle2, AlertTriangle,
+    XCircle, Star, BookOpen, Clock, Globe, ArrowLeft, RefreshCw,
+    Download, Copy, Check, Flame, Trophy, Award, Zap, Shield,
+    ExternalLink, Tag as TagIcon, Sparkles, FolderOpen
+} from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
+import { useAuth } from '../context/AuthContext'
+import { config } from '../config'
+import { ThemedButton } from '../components/ui/ThemedButton'
+import LoadingSpinner from '../components/LoadingSpinner'
+
+const Analytics = () => {
+    const { theme } = useTheme()
+    const { user } = useAuth()
+    const navigate = useNavigate()
+
+    const [isLoading, setIsLoading] = useState(true)
+    const [isRefreshing, setIsRefreshing] = useState(false)
+    const [timeRange, setTimeRange] = useState('30d') // '7d' | '30d' | 'all'
+    const [hoveredPoint, setHoveredPoint] = useState(null)
+    const [copiedDigest, setCopiedDigest] = useState(false)
+    const [analyticsData, setAnalyticsData] = useState({
+        summary: {
+            totalLinks: 0,
+            totalFavorites: 0,
+            unreadCount: 0,
+            readingCount: 0,
+            finishedCount: 0,
+            completionRate: 0,
+            healthyCount: 0,
+            brokenCount: 0,
+            warningCount: 0,
+            uncheckedCount: 0,
+            healthScore: 100,
+            totalCategories: 0,
+            totalTags: 0,
+            currentStreak: 0,
+            longestStreak: 0
+        },
+        timeline: [],
+        categories: [],
+        topDomains: [],
+        readingStatus: { unread: 0, reading: 0, finished: 0 },
+        healthDistribution: { healthy: 0, broken: 0, warning: 0, unchecked: 0 },
+        productivity: {
+            mostActiveDay: 'N/A',
+            mostActiveHour: 'N/A',
+            currentStreak: 0,
+            longestStreak: 0
+        }
+    })
+
+    useEffect(() => {
+        fetchAnalytics()
+    }, [])
+
+    const fetchAnalytics = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`${config.apiUrl}/links/analytics`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (response.ok) {
+                const data = await response.json()
+                setAnalyticsData(data)
+            }
+        } catch (error) {
+            console.error('Failed to fetch analytics:', error)
+        } finally {
+            setIsLoading(false)
+            setIsRefreshing(false)
+        }
+    }
+
+    const handleRefresh = () => {
+        setIsRefreshing(true)
+        fetchAnalytics()
+    }
+
+    const { summary, timeline, categories, topDomains, readingStatus, healthDistribution, productivity } = analyticsData
+
+    // Filter timeline based on timeRange
+    const displayedTimeline = timeRange === '7d'
+        ? timeline.slice(-7)
+        : timeline
+
+    // Compute SVG chart metrics
+    const maxCount = Math.max(...displayedTimeline.map(d => d.count), 4)
+    const chartHeight = 180
+    const chartWidth = 720
+    const paddingX = 40
+    const paddingY = 30
+    const effectiveWidth = chartWidth - paddingX * 2
+    const effectiveHeight = chartHeight - paddingY * 2
+
+    const points = displayedTimeline.map((item, index) => {
+        const x = displayedTimeline.length > 1
+            ? paddingX + (index / (displayedTimeline.length - 1)) * effectiveWidth
+            : paddingX + effectiveWidth / 2
+        const y = paddingY + (1 - item.count / maxCount) * effectiveHeight
+        return { x, y, ...item }
+    })
+
+    // Construct SVG path for area & line
+    const linePath = points.length > 0
+        ? points.reduce((acc, p, i) => `${acc} ${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`, '')
+        : ''
+
+    const areaPath = points.length > 0
+        ? `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${chartHeight - paddingY} L ${points[0].x.toFixed(1)} ${chartHeight - paddingY} Z`
+        : ''
+
+    // Copy Digest handler
+    const handleCopyDigest = () => {
+        const text = `📊 LinkVault Weekly Digest (${new Date().toLocaleDateString()}):
+• Total Bookmarks: ${summary.totalLinks}
+• Pinned Favorites: ${summary.totalFavorites}
+• Read Later: ${summary.unreadCount} unread | ${summary.finishedCount} finished (${summary.completionRate}% completion)
+• Vault Health: ${summary.healthScore}% healthy (${summary.healthyCount} live, ${summary.brokenCount} broken)
+• Active Streak: ${summary.currentStreak} days 🔥
+• Most Active Time: ${productivity.mostActiveDay} (${productivity.mostActiveHour})
+Generated by LinkVault`
+
+        navigator.clipboard.writeText(text)
+        setCopiedDigest(true)
+        setTimeout(() => setCopiedDigest(false), 2500)
+    }
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto space-y-8">
+                {/* Top Navigation & Breadcrumb */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate('/dashboard')}
+                            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-yellow-400 hover:border-blue-400 dark:hover:border-yellow-400 transition-all cursor-pointer shadow-xs"
+                            title="Back to Dashboard"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2.5">
+                                    <BarChart3 className="w-7 h-7 text-blue-600 dark:text-yellow-400" />
+                                    Vault Intelligence & Analytics
+                                </h1>
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Real-time metrics on saving velocity, reading queue momentum, platform diversity, and link health.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                        <ThemedButton
+                            variant="secondary"
+                            onClick={handleCopyDigest}
+                            className="flex items-center gap-1.5 text-xs whitespace-nowrap"
+                            title="Copy summary report to clipboard"
+                        >
+                            {copiedDigest ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4 text-blue-500" />}
+                            <span>{copiedDigest ? 'Copied Digest!' : 'Share Digest'}</span>
+                        </ThemedButton>
+
+                        <ThemedButton
+                            variant="secondary"
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className="flex items-center gap-1.5 text-xs whitespace-nowrap"
+                            title="Refresh analytics data"
+                        >
+                            <RefreshCw className={`w-4 h-4 text-blue-500 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            <span>{isRefreshing ? 'Updating...' : 'Refresh'}</span>
+                        </ThemedButton>
+                    </div>
+                </div>
+
+                {/* Hero Gamification & Momentum Banner */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Streak Card */}
+                    <motion.div
+                        whileHover={{ y: -2 }}
+                        className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/20 dark:border-amber-500/30 backdrop-blur-sm flex items-center gap-4 shadow-xs"
+                    >
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-md shadow-amber-500/20 flex-shrink-0">
+                            <Flame className="w-6 h-6 animate-pulse" />
+                        </div>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl font-black text-gray-900 dark:text-white">
+                                    {summary.currentStreak} {summary.currentStreak === 1 ? 'Day' : 'Days'}
+                                </span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                                    Saving Streak
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                                {summary.currentStreak > 0
+                                    ? `🔥 Fantastic! Longest streak: ${summary.longestStreak} days.`
+                                    : 'Save a bookmark today to ignite your streak!'}
+                            </p>
+                        </div>
+                    </motion.div>
+
+                    {/* Reading Velocity Card */}
+                    <motion.div
+                        whileHover={{ y: -2 }}
+                        className="p-5 rounded-2xl bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-transparent border border-blue-500/20 dark:border-blue-500/30 backdrop-blur-sm flex items-center gap-4 shadow-xs"
+                    >
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 flex-shrink-0">
+                            <BookOpen className="w-6 h-6" />
+                        </div>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl font-black text-gray-900 dark:text-white">
+                                    {summary.completionRate}%
+                                </span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                                    Read Velocity
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                                {summary.finishedCount} completed / {summary.unreadCount} in queue
+                            </p>
+                        </div>
+                    </motion.div>
+
+                    {/* Health Integrity Card */}
+                    <motion.div
+                        whileHover={{ y: -2 }}
+                        className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/20 dark:border-emerald-500/30 backdrop-blur-sm flex items-center gap-4 shadow-xs"
+                    >
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 flex-shrink-0">
+                            <Shield className="w-6 h-6" />
+                        </div>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl font-black text-gray-900 dark:text-white">
+                                    {summary.healthScore}%
+                                </span>
+                                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${summary.brokenCount > 0 ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300'}`}>
+                                    {summary.brokenCount > 0 ? `${summary.brokenCount} Broken` : 'Verified Live'}
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                                {summary.brokenCount > 0
+                                    ? `⚠️ Needs attention: ${summary.brokenCount} link(s) unreachable`
+                                    : '🛡️ Vault URLs are active and responsive'}
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* KPI Metrics 6-Card Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Total Bookmarks</span>
+                            <Globe className="w-3.5 h-3.5 text-blue-500" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1.5">{summary.totalLinks}</p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">Across all vault folders</span>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Favorites</span>
+                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-amber-500 mt-1.5">{summary.totalFavorites}</p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">Quick-access pins</span>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Read Later</span>
+                            <BookOpen className="w-3.5 h-3.5 text-blue-500" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1.5">{summary.unreadCount}</p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">{summary.readingCount} currently reading</span>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Completed Reads</span>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1.5">{summary.finishedCount}</p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">Knowledge gained</span>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Categories</span>
+                            <FolderOpen className="w-3.5 h-3.5 text-indigo-500" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1.5">{summary.totalCategories}</p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">{summary.totalTags} custom tags</span>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs font-medium">
+                            <span>Top Saved Site</span>
+                            <Sparkles className="w-3.5 h-3.5 text-yellow-500" />
+                        </div>
+                        <p className="text-base font-bold text-gray-900 dark:text-white mt-2 truncate" title={topDomains[0]?.domain || 'N/A'}>
+                            {topDomains[0]?.domain || 'None yet'}
+                        </p>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">
+                            {topDomains[0]?.count ? `${topDomains[0].count} links saved` : 'Start bookmarking'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Saving Velocity SVG Area Chart */}
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-blue-600 dark:text-yellow-400" />
+                                Saving Velocity & Bookmark Growth
+                            </h2>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                Frequency of links added over time. Peak saving activity: <span className="font-semibold text-gray-700 dark:text-gray-200">{productivity.mostActiveDay}</span> at <span className="font-semibold text-gray-700 dark:text-gray-200">{productivity.mostActiveHour}</span>.
+                            </p>
+                        </div>
+
+                        {/* Range toggle */}
+                        <div className="flex items-center bg-gray-100 dark:bg-slate-700/60 p-1 rounded-xl self-start sm:self-auto">
+                            <button
+                                type="button"
+                                onClick={() => setTimeRange('7d')}
+                                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                                    timeRange === '7d'
+                                        ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-xs font-bold'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                }`}
+                            >
+                                7 Days
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setTimeRange('30d')}
+                                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                                    timeRange === '30d'
+                                        ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-xs font-bold'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                }`}
+                            >
+                                30 Days
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Chart Container */}
+                    <div className="relative w-full overflow-hidden">
+                        <svg
+                            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                            className="w-full h-48 sm:h-56 select-none overflow-visible"
+                        >
+                            <defs>
+                                <linearGradient id="velocityGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.45" />
+                                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
+                                </linearGradient>
+                                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#3B82F6" />
+                                    <stop offset="100%" stopColor="#8B5CF6" />
+                                </linearGradient>
+                            </defs>
+
+                            {/* Background grid lines */}
+                            {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => {
+                                const y = paddingY + pct * effectiveHeight
+                                return (
+                                    <line
+                                        key={i}
+                                        x1={paddingX}
+                                        y1={y}
+                                        x2={chartWidth - paddingX}
+                                        y2={y}
+                                        stroke={theme === 'light' ? '#F1F5F9' : '#334155'}
+                                        strokeDasharray="4 4"
+                                        strokeWidth="1"
+                                    />
+                                )
+                            })}
+
+                            {/* Gradient Area */}
+                            {areaPath && (
+                                <path
+                                    d={areaPath}
+                                    fill="url(#velocityGradient)"
+                                    className="transition-all duration-300"
+                                />
+                            )}
+
+                            {/* Velocity Stroke Line */}
+                            {linePath && (
+                                <path
+                                    d={linePath}
+                                    fill="none"
+                                    stroke="url(#lineGradient)"
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="transition-all duration-300"
+                                />
+                            )}
+
+                            {/* Data points */}
+                            {points.map((p, idx) => (
+                                <g key={idx}>
+                                    <circle
+                                        cx={p.x}
+                                        cy={p.y}
+                                        r={p.count > 0 ? (hoveredPoint?.date === p.date ? 6 : 4) : 2.5}
+                                        className={`transition-all duration-200 cursor-pointer ${
+                                            p.count > 0
+                                                ? 'fill-blue-600 dark:fill-yellow-400 stroke-white dark:stroke-slate-900 stroke-2'
+                                                : 'fill-gray-300 dark:fill-slate-600'
+                                        }`}
+                                        onMouseEnter={() => setHoveredPoint(p)}
+                                        onMouseLeave={() => setHoveredPoint(null)}
+                                    />
+                                    {/* Sparse X-axis labels */}
+                                    {(idx % (timeRange === '7d' ? 1 : 5) === 0 || idx === points.length - 1) && (
+                                        <text
+                                            x={p.x}
+                                            y={chartHeight - 6}
+                                            textAnchor="middle"
+                                            className="text-[10px] fill-gray-400 dark:fill-gray-500 font-medium"
+                                        >
+                                            {p.label}
+                                        </text>
+                                    )}
+                                </g>
+                            ))}
+                        </svg>
+
+                        {/* Interactive Tooltip */}
+                        {hoveredPoint && (
+                            <div
+                                style={{
+                                    left: `${(hoveredPoint.x / chartWidth) * 100}%`,
+                                    top: `${(hoveredPoint.y / chartHeight) * 100}%`
+                                }}
+                                className="absolute pointer-events-none -translate-x-1/2 -translate-y-12 px-3 py-1.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold shadow-xl border border-gray-700/50 dark:border-gray-200 whitespace-nowrap z-20 flex flex-col items-center"
+                            >
+                                <span>{hoveredPoint.label}: {hoveredPoint.count} {hoveredPoint.count === 1 ? 'link' : 'links'}</span>
+                                <div className="w-2 h-2 rotate-45 bg-gray-900 dark:bg-white absolute -bottom-1"></div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Two-Column Intelligence Grid: Categories & Top Domains */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Category Distribution */}
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs flex flex-col">
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <FolderOpen className="w-4 h-4 text-blue-500" />
+                                    Category Distribution
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    How your knowledge repository is organized across domains.
+                                </p>
+                            </div>
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+                                {categories.length} active
+                            </span>
+                        </div>
+
+                        {categories.length === 0 ? (
+                            <div className="flex-1 flex items-center justify-center py-8 text-xs text-gray-400">
+                                No categories populated yet.
+                            </div>
+                        ) : (
+                            <div className="space-y-3.5 flex-1 mt-2">
+                                {categories.slice(0, 7).map(cat => (
+                                    <div key={cat.category} className="space-y-1">
+                                        <div className="flex justify-between items-center text-xs">
+                                            <span className="font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-1.5">
+                                                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cat.color }}></span>
+                                                {cat.category}
+                                            </span>
+                                            <span className="text-gray-400 font-medium">
+                                                {cat.count} links ({cat.percentage}%)
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-slate-700 overflow-hidden">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${cat.percentage}%` }}
+                                                transition={{ duration: 0.6, ease: "easeOut" }}
+                                                className="h-full rounded-full"
+                                                style={{ backgroundColor: cat.color }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Top Domains & Platforms */}
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs flex flex-col">
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-emerald-500" />
+                                    Top Saved Platforms & Sources
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    The websites you rely on most frequently.
+                                </p>
+                            </div>
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                {topDomains.length} sources
+                            </span>
+                        </div>
+
+                        {topDomains.length === 0 ? (
+                            <div className="flex-1 flex items-center justify-center py-8 text-xs text-gray-400">
+                                No bookmarks saved yet.
+                            </div>
+                        ) : (
+                            <div className="space-y-3 flex-1 mt-1">
+                                {topDomains.map((dom, i) => (
+                                    <div
+                                        key={dom.domain}
+                                        className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                            <span className="text-xs font-bold text-gray-400 w-4 text-center">
+                                                #{i + 1}
+                                            </span>
+                                            <img
+                                                src={dom.favicon}
+                                                alt=""
+                                                className="w-4 h-4 rounded-sm flex-shrink-0 object-contain"
+                                                onError={(e) => { e.target.style.display = 'none' }}
+                                            />
+                                            <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">
+                                                {dom.domain}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <div className="w-20 hidden sm:block h-1.5 rounded-full bg-gray-200 dark:bg-slate-600 overflow-hidden">
+                                                <div
+                                                    className="h-full bg-emerald-500 rounded-full"
+                                                    style={{ width: `${Math.min(100, dom.percentage * 2)}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-600 dark:text-gray-300 bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-600 shadow-2xs">
+                                                {dom.count} {dom.count === 1 ? 'link' : 'links'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Health & Reading Status Audit */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Reading Status Progress */}
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1">
+                            <BookOpen className="w-4 h-4 text-blue-500" />
+                            Reading Queue Progress
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-5">
+                            Keep track of articles and tutorials on your to-read backlog.
+                        </p>
+
+                        <div className="grid grid-cols-3 gap-3 mb-5">
+                            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 text-center">
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
+                                    <BookOpen className="w-3.5 h-3.5" /> Read Later
+                                </span>
+                                <p className="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{readingStatus.unread}</p>
+                            </div>
+                            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-center">
+                                <span className="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1">
+                                    <Clock className="w-3.5 h-3.5" /> Reading
+                                </span>
+                                <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">{readingStatus.reading}</p>
+                            </div>
+                            <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-center">
+                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+                                    <CheckCircle2 className="w-3.5 h-3.5" /> Finished
+                                </span>
+                                <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">{readingStatus.finished}</p>
+                            </div>
+                        </div>
+
+                        {/* Stacked Progress Bar */}
+                        <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                <span>Completion Breakdown</span>
+                                <span>{summary.completionRate}% read</span>
+                            </div>
+                            <div className="w-full h-3 rounded-full bg-gray-100 dark:bg-slate-700 flex overflow-hidden">
+                                <div
+                                    style={{ width: `${summary.totalLinks > 0 ? (readingStatus.finished / summary.totalLinks) * 100 : 0}%` }}
+                                    className="bg-emerald-500 h-full transition-all duration-500"
+                                    title={`Finished: ${readingStatus.finished}`}
+                                />
+                                <div
+                                    style={{ width: `${summary.totalLinks > 0 ? (readingStatus.reading / summary.totalLinks) * 100 : 0}%` }}
+                                    className="bg-amber-400 h-full transition-all duration-500"
+                                    title={`In Progress: ${readingStatus.reading}`}
+                                />
+                                <div
+                                    style={{ width: `${summary.totalLinks > 0 ? (readingStatus.unread / summary.totalLinks) * 100 : 0}%` }}
+                                    className="bg-slate-300 dark:bg-slate-600 h-full transition-all duration-500"
+                                    title={`Unread: ${readingStatus.unread}`}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Link Health Audit */}
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                        <div className="flex items-center justify-between mb-1">
+                            <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <Shield className="w-4 h-4 text-emerald-500" />
+                                Link Health Status
+                            </h3>
+                            <button
+                                onClick={() => navigate('/dashboard')}
+                                className="text-xs font-semibold text-blue-600 dark:text-yellow-400 hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                                Run Check in Vault →
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-5">
+                            Status of your URLs verified through direct HTTP probes.
+                        </p>
+
+                        <div className="grid grid-cols-4 gap-2.5 mb-5">
+                            <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-center">
+                                <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 block">Live</span>
+                                <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">{healthDistribution.healthy}</p>
+                            </div>
+                            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-center">
+                                <span className="text-[11px] font-semibold text-red-700 dark:text-red-300 block">Broken</span>
+                                <p className="text-lg font-bold text-red-600 dark:text-red-400 mt-1">{healthDistribution.broken}</p>
+                            </div>
+                            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-center">
+                                <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 block">Protected</span>
+                                <p className="text-lg font-bold text-amber-600 dark:text-amber-400 mt-1">{healthDistribution.warning}</p>
+                            </div>
+                            <div className="p-3 rounded-xl bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-700 text-center">
+                                <span className="text-[11px] font-semibold text-gray-600 dark:text-gray-400 block">Unchecked</span>
+                                <p className="text-lg font-bold text-gray-700 dark:text-gray-300 mt-1">{healthDistribution.unchecked}</p>
+                            </div>
+                        </div>
+
+                        {healthDistribution.broken > 0 ? (
+                            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center justify-between text-xs text-red-700 dark:text-red-300">
+                                <span>⚠️ {healthDistribution.broken} link(s) broken or returning errors.</span>
+                                <button
+                                    onClick={() => navigate('/dashboard')}
+                                    className="font-bold underline cursor-pointer"
+                                >
+                                    Fix Now
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 flex items-center gap-2 text-xs text-emerald-800 dark:text-emerald-200">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                <span>All checked links in your vault are active and reachable!</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Vault Milestones & Productivity Badges */}
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1">
+                        <Trophy className="w-5 h-5 text-amber-500" />
+                        Vault Milestones & Productivity Achievements
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">
+                        Unlock achievements as you build and maintain your personal web knowledge vault.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {/* Badge 1 */}
+                        <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all ${
+                            summary.totalLinks >= 5
+                                ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/80 shadow-xs'
+                                : 'bg-gray-50 dark:bg-slate-800/40 border-gray-200 dark:border-slate-700 opacity-60'
+                        }`}>
+                            <div className="p-2.5 rounded-xl bg-amber-400 text-amber-950 font-bold">
+                                <Award className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">Vault Architect</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Save at least 5 links ({Math.min(summary.totalLinks, 5)}/5)</p>
+                            </div>
+                        </div>
+
+                        {/* Badge 2 */}
+                        <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all ${
+                            summary.currentStreak >= 3
+                                ? 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-300 dark:border-orange-800/80 shadow-xs'
+                                : 'bg-gray-50 dark:bg-slate-800/40 border-gray-200 dark:border-slate-700 opacity-60'
+                        }`}>
+                            <div className="p-2.5 rounded-xl bg-orange-500 text-white font-bold">
+                                <Flame className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">Streak Master</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Maintain a 3-day saving streak ({Math.min(summary.currentStreak, 3)}/3)</p>
+                            </div>
+                        </div>
+
+                        {/* Badge 3 */}
+                        <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all ${
+                            summary.totalFavorites >= 3
+                                ? 'bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-800/80 shadow-xs'
+                                : 'bg-gray-50 dark:bg-slate-800/40 border-gray-200 dark:border-slate-700 opacity-60'
+                        }`}>
+                            <div className="p-2.5 rounded-xl bg-yellow-400 text-yellow-950 font-bold">
+                                <Star className="w-5 h-5 fill-yellow-950" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">Curator</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Pin 3 or more favorites ({Math.min(summary.totalFavorites, 3)}/3)</p>
+                            </div>
+                        </div>
+
+                        {/* Badge 4 */}
+                        <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all ${
+                            summary.finishedCount >= 1
+                                ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/80 shadow-xs'
+                                : 'bg-gray-50 dark:bg-slate-800/40 border-gray-200 dark:border-slate-700 opacity-60'
+                        }`}>
+                            <div className="p-2.5 rounded-xl bg-emerald-500 text-white font-bold">
+                                <Zap className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">Avid Learner</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Mark at least 1 article finished ({Math.min(summary.finishedCount, 1)}/1)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default Analytics
