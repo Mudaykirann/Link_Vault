@@ -19,6 +19,7 @@ import Terms from './pages/Terms'
 import LoadingScreen from './components/LoadingScreen'
 import CommandPalette from './components/CommandPalette'
 import ImportExportModal from './components/ImportExportModal'
+import AuthCallback from './pages/AuthCallback'
 import { useState, useRef, useEffect } from 'react'
 
 const App = () => {
@@ -71,6 +72,7 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/signup" element={<Navigate to="/register" replace />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
 
                 {/* Protected Dashboard */}
                 <Route

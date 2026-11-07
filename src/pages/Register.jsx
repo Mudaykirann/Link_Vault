@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, Loader2 } from 'lucide-react'
 import { ThemedButton } from '../components/ui/ThemedButton'
+import { GoogleAuthButton } from '../components/ui/GoogleAuthButton'
 import { config } from '../config'
 import { useAuth } from '../context/AuthContext'
 
@@ -138,6 +139,22 @@ const Register = () => {
                         }`}
                 >
                     <div className="space-y-6">
+                        {/* Google Sign Up */}
+                        <div>
+                            <GoogleAuthButton mode="register" onError={(msg) => setErrors({ auth: msg })} />
+
+                            <div className="relative my-6 text-center">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className={`w-full border-t ${theme === 'light' ? 'border-gray-200' : 'border-slate-700'}`}></div>
+                                </div>
+                                <span className={`relative px-3 text-xs uppercase tracking-wider font-semibold ${
+                                    theme === 'light' ? 'bg-white text-gray-400' : 'bg-[#1E293B] text-gray-500'
+                                }`}>
+                                    Or register with email
+                                </span>
+                            </div>
+                        </div>
+
                         {/* Username Input */}
                         <div>
                             <label className={`block mb-2 font-medium ${theme === 'light' ? 'text-[#1F2937]' : 'text-[#F9FAFB]'}`}>
