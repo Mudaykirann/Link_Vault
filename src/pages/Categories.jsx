@@ -80,17 +80,19 @@ const Categories = () => {
                             key={category}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700"
+                            className="bg-white dark:bg-[#0B0D11] p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-[#181C24] hover:border-[#0E7490] dark:hover:border-cyan-500/50 transition-all"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <FolderOpen className="w-6 h-6 text-blue-500" />
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 text-[#0E7490] dark:text-cyan-400 flex items-center justify-center">
+                                        <FolderOpen className="w-5 h-5 text-[#0E7490] dark:text-cyan-400" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                                         {category}
                                     </h3>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-[#94A3B8] font-medium">
                                 <span>{categoryStats[category] || 0} links</span>
                             </div>
                         </motion.div>
