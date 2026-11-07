@@ -654,11 +654,8 @@ const Dashboard = () => {
 
     return (
         <>
-            <AnimatePresence>
-                {isLoading && <LoadingSpinner />}
-            </AnimatePresence>
-
-            <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#050608]">
+            {isLoading && <LoadingSpinner />}
+            <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#050608] relative">
                 {/* Sidebar */}
                 <aside
                     className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'

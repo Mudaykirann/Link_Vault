@@ -54,11 +54,8 @@ const Categories = () => {
     }
 
     return (
-        <>
-            <AnimatePresence>
-                {isLoading && <LoadingSpinner />}
-            </AnimatePresence>
-
+        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#050608]">
+            {isLoading && <LoadingSpinner />}
             <div className="p-6 max-w-7xl mx-auto">
                 <div className="flex items-center mb-6">
                     <button
@@ -99,7 +96,7 @@ const Categories = () => {
                     ))}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

@@ -192,13 +192,9 @@ const Profile = () => {
     )
 
     return (
-        <>
-            <AnimatePresence>
-                {isLoading && <LoadingSpinner message="Loading Profile Command..." />}
-            </AnimatePresence>
-
-            <div className="min-h-screen bg-slate-50 dark:bg-[#050608] text-slate-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8 transition-colors">
-                <div className="max-w-5xl mx-auto space-y-6">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050608] text-slate-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8 transition-colors">
+            {isLoading && <LoadingSpinner />}
+            <div className="max-w-5xl mx-auto space-y-6">
                     {/* Top Navigation Bar */}
                     <div className="flex items-center justify-between">
                         <button
@@ -889,7 +885,6 @@ const Profile = () => {
                     )}
                 </div>
             </div>
-        </>
     )
 }
 
