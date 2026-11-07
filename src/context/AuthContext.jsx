@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
             }
 
             const response = await fetch(`${config.apiUrl}/auth/check`, {
-                credentials: 'include',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -44,15 +43,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(null);
                 }
             } else {
-                localStorage.removeItem('token');
-                localStorage.removeItem('refresh_token');
-                setUser(null);
+                console.warn('Auth check returned status:', response.status);
             }
         } catch (error) {
-            console.error('Auth check error:', error);
-            localStorage.removeItem('token');
-            localStorage.removeItem('refresh_token');
-            setUser(null);
+            console.warn('Network error during auth check:', error);
         } finally {
             setLoading(false);
         }

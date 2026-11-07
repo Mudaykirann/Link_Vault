@@ -26,12 +26,11 @@ const Login = () => {
             ...prev,
             [name]: value
         }))
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }))
-        }
+        setErrors(prev => ({
+            ...prev,
+            [name]: '',
+            auth: ''
+        }))
     }
 
     const validateForm = () => {
@@ -77,7 +76,7 @@ const Login = () => {
                 }
             } catch (error) {
                 console.error('Login error:', error)
-                setErrors({ auth: 'Something went wrong. Please check connection and try again.' })
+                setErrors({ auth: 'Connection error. Please check your internet or backend connection and try again.' })
             } finally {
                 setIsLoading(false)
             }
