@@ -1,39 +1,34 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { Suspense, lazy, useState, useEffect } from 'react'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
-import Home from './pages/Home'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
-import Links from './pages/Links'
-import Profile from './pages/Profile'
-import Categories from './pages/Categories'
-import Analytics from './pages/Analytics'
-import NotFound from './pages/NotFound'
-import Privacy from './pages/Privacy'
-import Terms from './pages/Terms'
-import LoadingScreen from './components/LoadingScreen'
+import LoadingSpinner from './components/LoadingSpinner'
 import CommandPalette from './components/CommandPalette'
 import ImportExportModal from './components/ImportExportModal'
-import AuthCallback from './pages/AuthCallback'
-import { useState, useRef, useEffect } from 'react'
+
+// Dynamic code-splitting for maximum page speed & Core Web Vitals
+const Home = lazy(() => import('./pages/Home'))
+const About = lazy(() => import('./pages/About'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Links = lazy(() => import('./pages/Links'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Categories = lazy(() => import('./pages/Categories'))
+const Analytics = lazy(() => import('./pages/Analytics'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Terms = lazy(() => import('./pages/Terms'))
+const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true)
-  const hasShownLoader = useRef(false)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
   const [isImportExportOpen, setIsImportExportOpen] = useState(false)
 
   useEffect(() => {
-    // Show the loading screen only on the first app load
-    if (!hasShownLoader.current) {
-      hasShownLoader.current = true
-    }
-
     const handleOpenPalette = () => setIsCommandPaletteOpen(true)
     const handleOpenImport = () => setIsImportExportOpen(true)
 
@@ -50,23 +45,23 @@ const App = () => {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
+          <div className="min-h-screen">
+            {/* Global Command Palette & Import/Export Modals */}
+            <CommandPalette
+              isOpen={isCommandPaletteOpen}
+              onClose={() => setIsCommandPaletteOpen(false)}
+            />
+            <ImportExportModal
+              isOpen={isImportExportOpen}
+              onClose={() => setIsImportExportOpen(false)}
+              onImportSuccess={() => {
+                setIsImportExportOpen(false)
+                window.dispatchEvent(new CustomEvent('linkvault:refresh-links'))
+              }}
+            />
 
-          {!isLoading && (
-            <div className="min-h-screen">
-              {/* Global Command Palette & Import/Export Modals */}
-              <CommandPalette
-                isOpen={isCommandPaletteOpen}
-                onClose={() => setIsCommandPaletteOpen(false)}
-              />
-              <ImportExportModal
-                isOpen={isImportExportOpen}
-                onClose={() => setIsImportExportOpen(false)}
-                onImportSuccess={() => {
-                  setIsImportExportOpen(false)
-                  window.dispatchEvent(new CustomEvent('linkvault:refresh-links'))
-                }}
-              />
+            {/* Suspense with Minimal Top Progress Beam */}
+            <Suspense fallback={<LoadingSpinner />}>
               <Routes>
                 {/* Auth routes outside Layout */}
                 <Route path="/login" element={<Login />} />
@@ -74,7 +69,7 @@ const App = () => {
                 <Route path="/signup" element={<Navigate to="/register" replace />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
 
-                {/* Protected Dashboard */}
+                {/* Protected Dashboard & Analytics */}
                 <Route
                   path="/dashboard"
                   element={
@@ -115,7 +110,6 @@ const App = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
-                  {/* Protected routes */}
                   <Route
                     path="/links"
                     element={
@@ -129,8 +123,8 @@ const App = () => {
                 {/* Catch all route - 404 Not Found */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </div>
-          )}
+            </Suspense>
+          </div>
         </AuthProvider>
       </ThemeProvider>
     </Router>

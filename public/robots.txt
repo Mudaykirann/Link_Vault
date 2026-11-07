@@ -1,0 +1,23 @@
+# Robots.txt for LinkVault (https://link-vault-7tf4.vercel.app)
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /login
+Allow: /register
+
+# Disallow private user-specific dashboard routes
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /links
+Disallow: /categories
+Disallow: /analytics
+Disallow: /auth/callback
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://link-vault-7tf4.vercel.app/sitemap.xml
