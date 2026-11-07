@@ -653,8 +653,9 @@ const Dashboard = () => {
     ]
 
     return (
-        <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#050608] relative">
+        <>
             {isLoading && <LoadingSpinner />}
+            <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#050608] relative">
                 {/* Sidebar */}
                 <aside
                     className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -1489,7 +1490,7 @@ const Dashboard = () => {
                 onClose={() => setIsDuplicateModalOpen(false)}
                 onDuplicatesMerged={handleDuplicatesMerged}
             />
-        </div>
+        </>
     )
 }
 
