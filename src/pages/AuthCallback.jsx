@@ -115,18 +115,18 @@ const AuthCallback = () => {
 
     return (
         <div className={`min-h-screen flex items-center justify-center p-4 ${
-            theme === 'light' ? 'bg-gray-50' : 'bg-slate-900'
+            theme === 'light' ? 'bg-[#F8FAFC]' : 'bg-[#050608]'
         }`}>
-            <div className={`max-w-md w-full p-8 rounded-2xl border shadow-xl text-center ${
-                theme === 'light' ? 'bg-white border-gray-200' : 'bg-slate-800 border-slate-700'
+            <div className={`max-w-md w-full p-8 rounded-3xl border shadow-2xl text-center ${
+                theme === 'light' ? 'bg-white border-slate-200' : 'bg-[#0B0D11] border-[#181C24]'
             }`}>
                 {status === 'processing' && (
                     <div className="flex flex-col items-center gap-4 py-6">
-                        <Loader2 className="w-10 h-10 animate-spin text-blue-600 dark:text-yellow-400" />
-                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                        <Loader2 className="w-10 h-10 animate-spin text-[#0E7490] dark:text-cyan-400" />
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                             Authenticating with Google...
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-slate-500 dark:text-[#94A3B8]">
                             Securing your vault session, please wait a moment.
                         </p>
                     </div>

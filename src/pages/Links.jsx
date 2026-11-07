@@ -619,7 +619,7 @@ const Links = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
             </div>
         )
     }
@@ -635,45 +635,54 @@ const Links = () => {
                         Welcome back, {user?.name || user?.username || user?.email?.split('@')[0]}
                     </p>
                 </div>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
                     <ThemedButton
                         variant="secondary"
                         onClick={handleCheckAllHealth}
                         disabled={isCheckingAllHealth || links.length === 0}
-                        className="flex items-center gap-2 whitespace-nowrap"
+                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
                         title="Run HTTP health check on all bookmarks"
                     >
-                        <Activity className={`w-4 h-4 text-emerald-500 ${isCheckingAllHealth ? 'animate-spin' : ''}`} />
-                        <span>{isCheckingAllHealth ? 'Checking...' : 'Check Health'}</span>
+                        <Activity className={`w-3.5 h-3.5 text-emerald-500 ${isCheckingAllHealth ? 'animate-spin' : ''}`} />
+                        <span>{isCheckingAllHealth ? 'Scanning Vault...' : 'Check Health'}</span>
                     </ThemedButton>
 
                     <ThemedButton
                         variant="secondary"
                         onClick={() => setIsDuplicateModalOpen(true)}
-                        className="flex items-center gap-2 whitespace-nowrap"
+                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
                         title="Scan and merge duplicate bookmarks in your vault"
                     >
-                        <Copy className="w-4 h-4 text-amber-500" />
+                        <Copy className="w-3.5 h-3.5 text-amber-500" />
                         <span>Duplicates</span>
                     </ThemedButton>
 
                     <ThemedButton
                         variant="secondary"
                         onClick={() => window.dispatchEvent(new CustomEvent('linkvault:open-import-export'))}
-                        className="flex items-center gap-2 whitespace-nowrap"
+                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
                         title="Import browser bookmarks or export vault backup"
                     >
-                        <Upload className="w-4 h-4 text-purple-500" />
+                        <Upload className="w-3.5 h-3.5 text-cyan-500" />
                         <span>Import / Export</span>
                     </ThemedButton>
 
-                    <ThemedButton variant="secondary" onClick={exportToCSV} className="flex items-center gap-2 whitespace-nowrap">
-                        <Download className="w-4 h-4" />
-                        CSV Export
+                    <ThemedButton
+                        variant="secondary"
+                        onClick={exportToCSV}
+                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
+                    >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>CSV Export</span>
                     </ThemedButton>
-                    <ThemedButton variant="primary" onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 whitespace-nowrap">
+
+                    <ThemedButton
+                        variant="primary"
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-4 rounded-xl font-bold shadow-md shadow-cyan-500/20"
+                    >
                         <Plus className="w-4 h-4" />
-                        Add New Link
+                        <span>Add New Link</span>
                     </ThemedButton>
                 </div>
             </div>
@@ -1040,7 +1049,7 @@ const Links = () => {
                                 type="button"
                                 onClick={() => handleAutoFetchMetadata()}
                                 disabled={isFetchingMetadata || !newLink.url}
-                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-yellow-400 hover:underline disabled:opacity-50"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E7490] dark:text-cyan-400 hover:underline disabled:opacity-50 cursor-pointer"
                             >
                                 {isFetchingMetadata ? (
                                     <>
@@ -1200,7 +1209,7 @@ const Links = () => {
                                             {newLink.description}
                                         </p>
                                     )}
-                                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 dark:bg-slate-700 text-blue-700 dark:text-yellow-400">
+                                    <span className="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-50 dark:bg-cyan-950/40 text-[#0E7490] dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/50">
                                         {newLink.category || 'Personal'}
                                     </span>
                                 </div>

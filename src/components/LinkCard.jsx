@@ -284,9 +284,9 @@ const LinkCard = ({ link, onEdit, onDelete, onShare, onTagClick, onCheckHealth, 
                     : '0 10px 15px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -2px rgba(0, 0, 0, 0.2)'
             }}
             transition={{ duration: 0.2 }}
-            className={`group rounded-xl border overflow-hidden flex flex-col transition-colors ${theme === 'light'
-                ? 'bg-white border-[#E5E7EB] hover:border-[#2563EB]'
-                : 'bg-[#1E293B] border-[#334155] hover:border-[#FACC15]'
+            className={`group rounded-2xl border overflow-hidden flex flex-col transition-all duration-200 ${theme === 'light'
+                ? 'bg-white border-slate-300 hover:border-[#0E7490] shadow-sm hover:shadow-md'
+                : 'bg-[#0B0D11] border-[#181C24] hover:border-cyan-400/80 shadow-md hover:shadow-cyan-500/10'
                 }`}
         >
             {/* Optional OG Image Preview */}

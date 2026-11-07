@@ -19,9 +19,9 @@ const LoadingScreen = ({ onLoadingComplete }) => {
                     }, 200);
                     return 100;
                 }
-                return prev + 4;
+                return prev + 5;
             });
-        }, 15);
+        }, 16);
 
         return () => clearInterval(interval);
     }, [onLoadingComplete]);
@@ -32,58 +32,59 @@ const LoadingScreen = ({ onLoadingComplete }) => {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className={`fixed inset-0 z-50 flex flex-col items-center justify-center ${theme === 'light' ? 'bg-white' : 'bg-slate-900'
-                        }`}
+                    transition={{ duration: 0.3 }}
+                    className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-colors duration-200 ${
+                        theme === 'light' ? 'bg-[#F8FAFC]' : 'bg-[#050608]'
+                    }`}
                 >
+                    {/* Ambient Obsidian Glow */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[140px] opacity-25 ${
+                            theme === 'light' ? 'bg-cyan-200' : 'bg-cyan-900/30'
+                        }`} />
+                    </div>
+
                     {/* Logo Container */}
                     <motion.div
-                        initial={{ scale: 0.5, opacity: 0 }}
+                        initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="mb-8"
+                        transition={{ duration: 0.4 }}
+                        className="mb-8 relative z-10 flex flex-col items-center gap-3"
                     >
-                        <div className={`text-4xl flex items-center font-bold ${theme === 'light' ? 'text-blue-600' : 'text-yellow-400'
-                            }`}>
-                            <LinkIcon className={`w-6 h-6 mr-2 ${theme === 'light' ? 'text-blue-600' : 'text-yellow-400'}`} />
-                            <span className={`text-xl md:text-2xl font-bold transition-colors duration-200
-                            ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-                                Link<span className={theme === 'light' ? 'text-blue-600' : 'text-yellow-400'}>Vault</span>
-                            </span>
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-teal-500 text-slate-950 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                            <LinkIcon className="w-7 h-7 text-slate-950" />
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            <span className={theme === 'light' ? 'text-[#0F172A]' : 'text-white'}>Link</span>
+                            <span className="text-cyan-500">Vault</span>
                         </div>
                     </motion.div>
 
-                    {/* Progress Bar */}
-                    <div className="w-64 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress}%` }}
-                            transition={{ duration: 0.5 }}
-                            className={`h-full ${theme === 'light'
-                                ? 'bg-blue-600'
-                                : 'bg-yellow-400'
-                                }`}
-                        />
+                    {/* Laser Obsidian Progress Bar */}
+                    <div className="relative z-10 w-64 sm:w-72">
+                        <div className={`h-2 rounded-full overflow-hidden p-[1px] border ${
+                            theme === 'light' 
+                                ? 'bg-slate-200/80 border-slate-300' 
+                                : 'bg-[#0B0D11] border-[#181C24]'
+                        }`}>
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progress}%` }}
+                                transition={{ duration: 0.15 }}
+                                className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]"
+                            />
+                        </div>
+
+                        {/* Progress Status Readout */}
+                        <div className="mt-4 flex items-center justify-between text-xs font-mono">
+                            <span className={theme === 'light' ? 'text-slate-500 font-medium' : 'text-[#8A94A6]'}>
+                                Initializing vault...
+                            </span>
+                            <span className="font-bold text-cyan-600 dark:text-cyan-400">
+                                {progress}%
+                            </span>
+                        </div>
                     </div>
-
-                    {/* Progress Text */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`mt-4 text-lg font-medium ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'
-                            }`}
-                    >
-                        {progress}%
-                    </motion.div>
-
-                    {/* Loading Message */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`mt-2 text-sm ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'
-                            }`}
-                    >
-                        Preparing your vault...
-                    </motion.div>
                 </motion.div>
             )}
         </AnimatePresence>

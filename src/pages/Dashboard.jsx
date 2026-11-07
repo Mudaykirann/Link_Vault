@@ -658,33 +658,35 @@ const Dashboard = () => {
                 {isLoading && <LoadingSpinner />}
             </AnimatePresence>
 
-            <div className="flex h-screen bg-gray-50 dark:bg-slate-900">
+            <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#050608]">
                 {/* Sidebar */}
                 <aside
                     className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                        } fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static border-r dark:border-slate-700`}
+                        } fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#0B0D11] transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static border-r border-slate-200 dark:border-[#181C24]`}
                 >
-                    <div className="flex items-center justify-between h-16 px-4 border-b dark:border-slate-700 cursor-pointer">
-                        <h1 onClick={() => navigate('/')} className="text-xl font-bold text-gray-800 dark:text-white">LinkVault</h1>
+                    <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-[#181C24] cursor-pointer">
+                        <h1 onClick={() => navigate('/')} className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            Link<span className="text-cyan-500">Vault</span>
+                        </h1>
                         <button
                             onClick={() => setIsSidebarOpen(false)}
-                            className="lg:hidden"
+                            className="lg:hidden p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
                         >
                             <X className="w-6 h-6" />
                         </button>
                     </div>
 
-                    <nav className="p-4 space-y-2">
+                    <nav className="p-4 space-y-1.5">
                         {sidebarItems.map(item => (
                             <button
                                 key={item.id}
                                 onClick={() => handleNavigation(item.id)}
-                                className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors ${activeTab === item.id
-                                    ? 'bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-white'
-                                    : 'hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300'
+                                className={`flex items-center w-full px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${activeTab === item.id
+                                    ? 'bg-cyan-50 dark:bg-cyan-950/40 text-[#0E7490] dark:text-cyan-400 font-bold border border-cyan-200 dark:border-cyan-800/40'
+                                    : 'hover:bg-slate-100 dark:hover:bg-[#12151C] text-slate-700 dark:text-[#94A3B8] hover:text-[#0E7490] dark:hover:text-cyan-400'
                                     }`}
                             >
-                                <item.icon className="w-5 h-5 mr-3" />
+                                <item.icon className="w-4 h-4 mr-3" />
                                 <span>{item.label}</span>
                             </button>
                         ))}
@@ -704,69 +706,69 @@ const Dashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <header className="flex items-center justify-between h-16 px-4 bg-white dark:bg-slate-800 border-b dark:border-slate-700">
+                    <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#181C24]">
                         <div className="flex items-center">
                             <button
                                 onClick={() => setIsSidebarOpen(true)}
-                                className="lg:hidden mr-4"
+                                className="lg:hidden mr-4 p-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white"
                             >
                                 <Menu className="w-6 h-6" />
                             </button>
                             <div>
-                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                                     Welcome back, {user?.name || user?.username || user?.email?.split('@')[0]}
                                 </h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <p className="text-xs text-slate-500 dark:text-[#94A3B8]">
                                     {user?.email}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-3">
                             <button
                                 onClick={toggleTheme}
-                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+                                className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#12151C] transition-colors"
                             >
                                 {theme === 'light' ? (
-                                    <Moon className="w-5 h-5" />
+                                    <Moon className="w-5 h-5 text-slate-600" />
                                 ) : (
-                                    <Sun className="w-5 h-5" />
+                                    <Sun className="w-5 h-5 text-cyan-400" />
                                 )}
                             </button>
                         </div>
                     </header>
 
-                    <main className="flex-1 overflow-y-auto p-6">
-                        {/* Stats Cards */}
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] dark:bg-[#050608]">
+                        {/* Stats Cards in Obsidian Glass */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700 shadow-sm">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Total Links</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.totalLinks}</p>
+                            <div className="bg-white dark:bg-[#0B0D11] p-4 rounded-2xl border border-slate-200 dark:border-[#181C24] shadow-sm">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">Total Links</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.totalLinks}</p>
                             </div>
-                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700 shadow-sm">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Categories</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.totalCategories}</p>
+                            <div className="bg-white dark:bg-[#0B0D11] p-4 rounded-2xl border border-slate-200 dark:border-[#181C24] shadow-sm">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">Categories</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.totalCategories}</p>
                             </div>
-                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700 shadow-sm">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Recently Added (7d)</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.recentlyAdded}</p>
+                            <div className="bg-white dark:bg-[#0B0D11] p-4 rounded-2xl border border-slate-200 dark:border-[#181C24] shadow-sm">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">Recently Added (7d)</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.recentlyAdded}</p>
                             </div>
-                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700 shadow-sm">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Top Category</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1 truncate">{stats.mostUsedCategory}</p>
+                            <div className="bg-white dark:bg-[#0B0D11] p-4 rounded-2xl border border-slate-200 dark:border-[#181C24] shadow-sm">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">Top Category</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 truncate">{stats.mostUsedCategory || 'General'}</p>
                             </div>
                             <div
                                 onClick={() => stats.brokenCount > 0 ? setHealthFilter(prev => prev === 'broken' ? 'all' : 'broken') : null}
-                                className={`bg-white dark:bg-slate-800 p-4 rounded-xl border dark:border-slate-700 shadow-sm transition-all ${
+                                className={`bg-white dark:bg-[#0B0D11] p-4 rounded-2xl border border-slate-200 dark:border-[#181C24] shadow-sm transition-all ${
                                     stats.brokenCount > 0 ? 'cursor-pointer hover:border-red-400 ring-1 ring-red-100 dark:ring-red-900/30' : ''
                                 }`}
                                 title={stats.brokenCount > 0 ? "Click to view broken links" : "Link health status"}
                             >
-                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-between">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8] flex items-center justify-between">
                                     <span>Link Health</span>
                                     <Activity className={`w-3.5 h-3.5 ${stats.brokenCount > 0 ? 'text-red-500' : 'text-emerald-500'}`} />
                                 </p>
-                                <p className="text-2xl font-bold mt-1">
+                                <p className="text-2xl font-black mt-1">
                                     {stats.brokenCount > 0 ? (
                                         <span className="text-rose-600 dark:text-rose-400 text-xl font-bold flex items-center gap-1.5">
                                             {stats.brokenCount} Broken ⚠️
@@ -776,7 +778,7 @@ const Dashboard = () => {
                                             {stats.healthyCount > 0 ? `${Math.round((stats.healthyCount / stats.totalLinks) * 100)}% Live` : 'Healthy'}
                                         </span>
                                     ) : (
-                                        <span className="text-gray-400 text-xl">100%</span>
+                                        <span className="text-slate-400 text-xl font-bold">100%</span>
                                     )}
                                 </p>
                             </div>
@@ -807,105 +809,141 @@ const Dashboard = () => {
                             </div>
                         )}
 
-                        {/* Search & Filter Bar */}
-                        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Search links..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
+                        {/* Search & Action Toolbar */}
+                        <div className="space-y-3 mb-6">
+                            {/* Primary Row: Search + Category + Add Link */}
+                            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search bookmarks by title, URL, tag, or description..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-slate-200 dark:border-[#181C24] bg-white dark:bg-[#0B0D11] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0E7490] dark:focus:ring-cyan-500/50 text-sm shadow-xs transition-all"
+                                    />
+                                    {searchTerm && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setSearchTerm('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
 
-                            <div className="relative">
-                                <button
-                                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200"
-                                >
-                                    <Filter className="w-5 h-5" />
-                                    <span>{selectedCategory}</span>
-                                    <ChevronDown className={`w-4 h-4 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
-                                </button>
+                                <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+                                    {/* Category Selector Dropdown */}
+                                    <div className="relative flex-1 sm:flex-none">
+                                        <button
+                                            onClick={() => setIsFilterOpen(!isFilterOpen)}
+                                            className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#181C24] bg-white dark:bg-[#0B0D11] text-slate-700 dark:text-slate-200 hover:border-[#0E7490] dark:hover:border-cyan-500/50 text-sm font-semibold shadow-xs transition-all cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-2 truncate">
+                                                <Filter className="w-4 h-4 text-slate-400" />
+                                                <span className="truncate max-w-[120px]">{selectedCategory}</span>
+                                            </div>
+                                            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
+                                        </button>
 
-                                {isFilterOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg border dark:border-slate-700 bg-white dark:bg-slate-800 z-10 overflow-hidden">
-                                        <div className="max-h-60 overflow-y-auto">
-                                            {categories.map(cat => (
-                                                <button
-                                                    key={cat}
-                                                    onClick={() => {
-                                                        setSelectedCategory(cat)
-                                                        setIsFilterOpen(false)
-                                                    }}
-                                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-700 ${selectedCategory === cat ? 'bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-white font-medium' : 'text-gray-700 dark:text-gray-200'}`}
-                                                >
-                                                    {cat}
-                                                </button>
-                                            ))}
-                                        </div>
+                                        {isFilterOpen && (
+                                            <div className="absolute right-0 mt-2 w-52 rounded-xl shadow-xl border border-slate-200 dark:border-[#181C24] bg-white dark:bg-[#0B0D11] z-30 overflow-hidden py-1">
+                                                <div className="max-h-60 overflow-y-auto">
+                                                    {categories.map(cat => (
+                                                        <button
+                                                            key={cat}
+                                                            onClick={() => {
+                                                                setSelectedCategory(cat)
+                                                                setIsFilterOpen(false)
+                                                            }}
+                                                            className={`w-full text-left px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
+                                                                selectedCategory === cat
+                                                                    ? 'bg-cyan-50 dark:bg-cyan-950/40 text-[#0E7490] dark:text-cyan-400 font-bold'
+                                                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#12151C]'
+                                                            }`}
+                                                        >
+                                                            {cat}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+
+                                    {/* Primary CTA */}
+                                    <ThemedButton
+                                        variant="primary"
+                                        onClick={() => setIsAddModalOpen(true)}
+                                        className="flex items-center gap-2 whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-cyan-500/20"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        <span>Add Link</span>
+                                    </ThemedButton>
+                                </div>
                             </div>
 
-                            {/* Check Health Button */}
-                            <ThemedButton
-                                variant="secondary"
-                                onClick={handleCheckAllHealth}
-                                disabled={isCheckingAllHealth || links.length === 0}
-                                className="flex items-center gap-2 whitespace-nowrap"
-                                title="Run HTTP health check on all bookmarks"
-                            >
-                                <Activity className={`w-4 h-4 text-emerald-500 ${isCheckingAllHealth ? 'animate-spin' : ''}`} />
-                                <span>{isCheckingAllHealth ? 'Checking...' : 'Check Health'}</span>
-                            </ThemedButton>
+                            {/* Secondary Utility Row: Check Health, Duplicates, Import/Export */}
+                            <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-200/60 dark:border-[#181C24]/60">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    {/* Check Health Button */}
+                                    <ThemedButton
+                                        variant="secondary"
+                                        onClick={handleCheckAllHealth}
+                                        disabled={isCheckingAllHealth || links.length === 0}
+                                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
+                                        title="Run HTTP health check on all bookmarks"
+                                    >
+                                        <Activity className={`w-3.5 h-3.5 text-emerald-500 ${isCheckingAllHealth ? 'animate-spin' : ''}`} />
+                                        <span>{isCheckingAllHealth ? 'Scanning Vault...' : 'Check Health'}</span>
+                                        {stats.brokenCount > 0 && !isCheckingAllHealth && (
+                                            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-500 dark:text-rose-400">
+                                                {stats.brokenCount}
+                                            </span>
+                                        )}
+                                    </ThemedButton>
 
-                            {/* Scan Duplicates Button */}
-                            <ThemedButton
-                                variant="secondary"
-                                onClick={() => setIsDuplicateModalOpen(true)}
-                                className="flex items-center gap-2 whitespace-nowrap"
-                                title="Scan and merge duplicate bookmarks in your vault"
-                            >
-                                <Copy className="w-4 h-4 text-amber-500" />
-                                <span>Duplicates</span>
-                            </ThemedButton>
+                                    {/* Scan Duplicates Button */}
+                                    <ThemedButton
+                                        variant="secondary"
+                                        onClick={() => setIsDuplicateModalOpen(true)}
+                                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
+                                        title="Scan and merge duplicate bookmarks in your vault"
+                                    >
+                                        <Copy className="w-3.5 h-3.5 text-amber-500" />
+                                        <span>Duplicates</span>
+                                    </ThemedButton>
 
-                            {/* Import / Export Button */}
-                            <ThemedButton
-                                variant="secondary"
-                                onClick={() => window.dispatchEvent(new CustomEvent('linkvault:open-import-export'))}
-                                className="flex items-center gap-2 whitespace-nowrap"
-                                title="Import from browser or export backups"
-                            >
-                                <Upload className="w-4 h-4 text-purple-500" />
-                                <span>Import / Export</span>
-                            </ThemedButton>
+                                    {/* Import / Export Button */}
+                                    <ThemedButton
+                                        variant="secondary"
+                                        onClick={() => window.dispatchEvent(new CustomEvent('linkvault:open-import-export'))}
+                                        className="flex items-center gap-2 whitespace-nowrap text-xs py-2 px-3.5 rounded-xl font-semibold"
+                                        title="Import from browser or export backups"
+                                    >
+                                        <Upload className="w-3.5 h-3.5 text-cyan-500" />
+                                        <span>Import / Export</span>
+                                    </ThemedButton>
+                                </div>
 
-                            <ThemedButton
-                                variant="primary"
-                                onClick={() => setIsAddModalOpen(true)}
-                                className="flex items-center gap-2 whitespace-nowrap"
-                            >
-                                <Plus className="w-5 h-5" />
-                                Add Link
-                            </ThemedButton>
+                                <div className="text-xs text-slate-500 dark:text-[#94A3B8] font-medium hidden sm:block">
+                                    {filteredLinks.length} of {links.length} bookmarks
+                                </div>
+                            </div>
                         </div>
 
                         {/* Quick View & Reading Status Tabs */}
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
-                            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
+                            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
                                 Views:
                             </span>
                             <button
                                 type="button"
                                 onClick={() => setViewFilter('all')}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     viewFilter === 'all'
-                                        ? 'bg-blue-600 text-white dark:bg-yellow-400 dark:text-slate-900 font-semibold shadow-xs'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
+                                        ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-700 dark:text-[#94A3B8] hover:border-cyan-500/40'
                                 }`}
                             >
                                 All Links ({links.length})
@@ -913,10 +951,10 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setViewFilter('favorites')}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     viewFilter === 'favorites'
-                                        ? 'bg-amber-400 text-amber-950 font-bold shadow-xs'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-amber-600 dark:text-amber-400 hover:border-amber-400'
+                                        ? 'bg-amber-400 text-amber-950 font-bold shadow-md shadow-amber-400/20'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-amber-600 dark:text-amber-400 hover:border-amber-400'
                                 }`}
                             >
                                 <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -925,10 +963,10 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setViewFilter('read-later')}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     viewFilter === 'read-later'
-                                        ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 hover:border-blue-400'
+                                        ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-[#0E7490] dark:text-cyan-400 hover:border-cyan-400'
                                 }`}
                             >
                                 <BookOpen className="w-3.5 h-3.5" />
@@ -937,10 +975,10 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setViewFilter('in-progress')}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     viewFilter === 'in-progress'
-                                        ? 'bg-amber-600 text-white font-semibold shadow-xs'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-amber-600 dark:text-amber-400 hover:border-amber-400'
+                                        ? 'bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-amber-600 dark:text-amber-400 hover:border-amber-400'
                                 }`}
                             >
                                 <Clock className="w-3.5 h-3.5" />
@@ -949,10 +987,10 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setViewFilter('finished')}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     viewFilter === 'finished'
-                                        ? 'bg-emerald-600 text-white font-semibold shadow-xs'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 hover:border-emerald-400'
+                                        ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/20'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-emerald-600 dark:text-emerald-400 hover:border-emerald-400'
                                 }`}
                             >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -962,7 +1000,7 @@ const Dashboard = () => {
                                 <button
                                     type="button"
                                     onClick={() => setViewFilter('all')}
-                                    className="text-xs text-red-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer"
+                                    className="text-xs text-rose-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer font-medium"
                                 >
                                     <X className="w-3 h-3" /> Reset View
                                 </button>
@@ -972,16 +1010,16 @@ const Dashboard = () => {
                         {/* Collections / Folder Filter Bar */}
                         {availableCollections.length > 0 && (
                             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
-                                <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
+                                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
                                     <Folder className="w-3.5 h-3.5" /> Folders:
                                 </span>
                                 <button
                                     type="button"
                                     onClick={() => setSelectedCollection(null)}
-                                    className={`px-2.5 py-0.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                         !selectedCollection
-                                            ? 'bg-indigo-600 text-white font-semibold shadow-xs'
-                                            : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
+                                            ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 font-bold shadow-xs'
+                                            : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-700 dark:text-[#94A3B8] hover:border-cyan-500/40'
                                     }`}
                                 >
                                     All ({links.length})
@@ -991,10 +1029,10 @@ const Dashboard = () => {
                                         key={col}
                                         type="button"
                                         onClick={() => setSelectedCollection(selectedCollection === col ? null : col)}
-                                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
+                                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                             selectedCollection === col
-                                                ? 'bg-indigo-600 text-white font-semibold shadow-xs'
-                                                : 'bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-900/60 text-indigo-700 dark:text-indigo-400 hover:border-indigo-400'
+                                                ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                                                : 'bg-white dark:bg-[#0B0D11] border border-indigo-200 dark:border-indigo-900/60 text-indigo-700 dark:text-indigo-400 hover:border-indigo-400'
                                         }`}
                                     >
                                         📁 {col} ({links.filter(l => l.collection?.toLowerCase() === col.toLowerCase()).length})
@@ -1004,7 +1042,7 @@ const Dashboard = () => {
                                     <button
                                         type="button"
                                         onClick={() => setSelectedCollection(null)}
-                                        className="text-xs text-red-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer"
+                                        className="text-xs text-rose-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer font-medium"
                                     >
                                         <X className="w-3 h-3" /> Clear Folder
                                     </button>
@@ -1014,16 +1052,16 @@ const Dashboard = () => {
 
                         {/* Health Status Filter Bar */}
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
-                            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
+                            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
                                 <Activity className="w-3.5 h-3.5" /> Health:
                             </span>
                             <button
                                 type="button"
                                 onClick={() => setHealthFilter('all')}
-                                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex-shrink-0 cursor-pointer ${
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex-shrink-0 cursor-pointer ${
                                     healthFilter === 'all'
-                                        ? 'bg-blue-600 text-white dark:bg-yellow-400 dark:text-slate-900 font-semibold'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+                                        ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 font-bold shadow-xs'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-600 dark:text-[#94A3B8] hover:border-cyan-500/40'
                                 }`}
                             >
                                 All ({links.length})
@@ -1033,8 +1071,8 @@ const Dashboard = () => {
                                 onClick={() => setHealthFilter('healthy')}
                                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     healthFilter === 'healthy'
-                                        ? 'bg-emerald-600 text-white shadow-sm font-semibold'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 hover:border-emerald-400'
+                                        ? 'bg-emerald-600 text-white shadow-sm font-bold'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-emerald-600 dark:text-emerald-400 hover:border-emerald-400'
                                 }`}
                             >
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -1045,13 +1083,13 @@ const Dashboard = () => {
                                 onClick={() => setHealthFilter('broken')}
                                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     healthFilter === 'broken'
-                                        ? 'bg-red-600 text-white shadow-sm font-semibold'
+                                        ? 'bg-rose-600 text-white shadow-sm font-bold'
                                         : links.filter(l => l.status === 'broken').length > 0
-                                            ? 'bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:border-red-500 font-medium'
-                                            : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400 hover:border-gray-400'
+                                            ? 'bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:border-rose-500 font-bold'
+                                            : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-600 dark:text-[#94A3B8] hover:border-rose-400'
                                 }`}
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                 <span>Broken ({links.filter(l => l.status === 'broken').length})</span>
                             </button>
                             <button
@@ -1059,8 +1097,8 @@ const Dashboard = () => {
                                 onClick={() => setHealthFilter('unchecked')}
                                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                     healthFilter === 'unchecked'
-                                        ? 'bg-slate-700 text-white shadow-sm font-semibold'
-                                        : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400 hover:border-gray-400'
+                                        ? 'bg-slate-700 text-white shadow-sm font-bold'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-600 dark:text-[#94A3B8] hover:border-slate-400'
                                 }`}
                             >
                                 <span>Unchecked ({links.filter(l => !l.status || l.status === 'pending').length})</span>
@@ -1069,7 +1107,7 @@ const Dashboard = () => {
                                 <button
                                     type="button"
                                     onClick={() => setHealthFilter('all')}
-                                    className="text-xs text-red-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer"
+                                    className="text-xs text-rose-500 hover:underline flex items-center gap-0.5 ml-1 flex-shrink-0 cursor-pointer font-medium"
                                 >
                                     <X className="w-3 h-3" /> Clear
                                 </button>
@@ -1078,16 +1116,16 @@ const Dashboard = () => {
 
                         {/* Tag Filter Bar */}
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-6">
-                            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
+                            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1 uppercase tracking-wider flex-shrink-0">
                                 <TagIcon className="w-3.5 h-3.5" /> Tags:
                             </span>
                             <button
                                 type="button"
                                 onClick={() => setSelectedTag(null)}
-                                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex-shrink-0 cursor-pointer ${
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex-shrink-0 cursor-pointer ${
                                     !selectedTag
-                                        ? 'bg-blue-600 text-white dark:bg-yellow-400 dark:text-slate-900 font-semibold'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+                                        ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 font-bold shadow-xs'
+                                        : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-600 dark:text-[#94A3B8] hover:border-cyan-500/40'
                                 }`}
                             >
                                 All
@@ -1102,12 +1140,12 @@ const Dashboard = () => {
                                             onClick={() => setSelectedTag(isSelected ? null : tagObj.name)}
                                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all flex-shrink-0 cursor-pointer ${
                                                 isSelected
-                                                    ? 'bg-blue-600 text-white dark:bg-yellow-400 dark:text-slate-900 shadow-sm font-semibold'
-                                                    : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-yellow-400'
+                                                    ? 'bg-[#0E7490] text-white dark:bg-cyan-400 dark:text-slate-950 shadow-sm font-bold'
+                                                    : 'bg-white dark:bg-[#0B0D11] border border-slate-200 dark:border-[#181C24] text-slate-700 dark:text-[#94A3B8] hover:border-cyan-500/40'
                                             }`}
                                         >
                                             <span>#{tagObj.name}</span>
-                                            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20 text-white dark:text-slate-900' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400'}`}>
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-black/15 dark:bg-black/20 text-white dark:text-slate-950 font-bold' : 'bg-slate-100 dark:bg-[#12151C] text-slate-500 dark:text-[#94A3B8]'}`}>
                                                 {tagObj.count}
                                             </span>
                                         </button>
@@ -1184,7 +1222,7 @@ const Dashboard = () => {
                                 type="button"
                                 onClick={() => handleAutoFetchMetadata()}
                                 disabled={isFetchingMetadata || !newLink.url}
-                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-yellow-400 hover:underline disabled:opacity-50"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E7490] dark:text-cyan-400 hover:underline disabled:opacity-50 cursor-pointer"
                             >
                                 {isFetchingMetadata ? (
                                     <>
@@ -1344,7 +1382,7 @@ const Dashboard = () => {
                                             {newLink.description}
                                         </p>
                                     )}
-                                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 dark:bg-slate-700 text-blue-700 dark:text-yellow-400">
+                                    <span className="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-50 dark:bg-cyan-950/40 text-[#0E7490] dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/50">
                                         {newLink.category || 'Personal'}
                                     </span>
                                 </div>

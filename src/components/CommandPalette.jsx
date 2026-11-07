@@ -301,14 +301,14 @@ export const CommandPalette = ({ isOpen: controlledIsOpen, onClose: controlledOn
                         exit={{ opacity: 0, scale: 0.96, y: -10 }}
                         transition={{ duration: 0.15, ease: 'easeOut' }}
                         className={`relative w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border ${theme === 'dark'
-                            ? 'bg-slate-900/95 border-slate-700/80 text-white shadow-purple-900/20'
-                            : 'bg-white/95 border-slate-200 text-slate-900 shadow-slate-400/20'
+                            ? 'bg-[#0B0D11]/98 border-[#181C24] text-white shadow-cyan-950/30'
+                            : 'bg-white/98 border-slate-300 text-slate-900 shadow-slate-300/50'
                             } backdrop-blur-xl`}
                     >
                         {/* Search Input Bar */}
-                        <div className={`flex items-center px-4 py-3.5 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
+                        <div className={`flex items-center px-4 py-3.5 border-b ${theme === 'dark' ? 'border-[#181C24]' : 'border-slate-200'
                             }`}>
-                            <Search className={`w-5 h-5 mr-3 shrink-0 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'
+                            <Search className={`w-5 h-5 mr-3 shrink-0 ${theme === 'dark' ? 'text-cyan-400' : 'text-[#0E7490]'
                                 }`} />
                             <input
                                 ref={inputRef}
@@ -370,25 +370,25 @@ export const CommandPalette = ({ isOpen: controlledIsOpen, onClose: controlledOn
                                                         onMouseEnter={() => setSelectedIndex(globalIdx)}
                                                         className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all ${isSelected
                                                             ? theme === 'dark'
-                                                                ? 'bg-purple-600 text-white'
-                                                                : 'bg-purple-600 text-white shadow-sm'
+                                                                ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/25'
+                                                                : 'bg-[#0E7490] text-white font-bold shadow-md'
                                                             : theme === 'dark'
-                                                                ? 'hover:bg-slate-800/60 text-slate-200'
+                                                                ? 'hover:bg-[#14181F] text-slate-200'
                                                                 : 'hover:bg-slate-100 text-slate-700'
                                                             }`}
-                                                    >
+                                                     >
                                                         <div className="flex items-center space-x-3 min-w-0">
                                                             <div className={`p-1.5 rounded-lg shrink-0 ${isSelected
-                                                                ? 'bg-white/20 text-white'
+                                                                ? theme === 'dark' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/20 text-white'
                                                                 : theme === 'dark'
-                                                                    ? 'bg-slate-800 text-purple-400'
-                                                                    : 'bg-purple-50 text-purple-600'
+                                                                    ? 'bg-[#14181F] text-cyan-400'
+                                                                    : 'bg-cyan-100 text-[#0E7490]'
                                                                 }`}>
                                                                 <Icon className="w-4 h-4" />
                                                             </div>
                                                             <div className="truncate">
-                                                                <p className="text-sm font-medium truncate">{item.title}</p>
-                                                                <p className={`text-xs truncate ${isSelected ? 'text-purple-100' : 'text-slate-400'}`}>
+                                                                <p className="text-sm font-semibold truncate">{item.title}</p>
+                                                                <p className={`text-xs truncate ${isSelected ? (theme === 'dark' ? 'text-slate-900 font-semibold' : 'text-cyan-100') : 'text-slate-500 dark:text-slate-400'}`}>
                                                                     {item.subtitle}
                                                                 </p>
                                                             </div>

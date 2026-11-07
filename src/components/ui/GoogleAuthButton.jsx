@@ -49,14 +49,14 @@ export const GoogleAuthButton = ({ mode = 'login', onError = null }) => {
                 flex items-center justify-center gap-3 border shadow-xs cursor-pointer
                 disabled:opacity-60 disabled:cursor-not-allowed
                 ${theme === 'light'
-                    ? 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400'
-                    : 'bg-[#1E293B] hover:bg-slate-700 text-gray-200 border-slate-700 hover:border-slate-600'
+                    ? 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300 hover:border-slate-400'
+                    : 'bg-[#12151C] hover:bg-[#181C24] text-slate-200 border-[#252C37] hover:border-cyan-500/50'
                 }
             `}
         >
             {isLoading ? (
                 <>
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-600 dark:text-yellow-400" />
+                    <Loader2 className="w-5 h-5 animate-spin text-[#0E7490] dark:text-cyan-400" />
                     <span>Connecting to Google...</span>
                 </>
             ) : (
